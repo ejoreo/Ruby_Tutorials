@@ -1,0 +1,88 @@
+	Diclaimer: I'm a fledgling Ruby programmer.
+
+	Ok, now that my dirty little secret is out of the way, let me announce my audience: my fellow fledglings!
+
+	If you search 'fibonacci sequence ruby' there are a lot of results.  Most of the hits, like this one, 
+	are attempting an exploration (and most succeed!) of various fundamental Ruby concepts through the popular
+	launch point of programming a Fibonacci sequence.  I'm writing this entry on the topic because I found a
+	lack of thoroughness in connecting the articles' text and the concepts being communicated through it to the 
+	code that I was looking at. I could tell that everything made sense...but my understanding
+	dissipated as I tried to map the text onto the code in my brainspace. 
+
+	I want those connections to be crystal clear, and potentially help save my readers time and unnecessary mental anguish.
+
+	We need to be able to: 
+
+		1) calculate and access a Fibonacci number 
+		2) store that number in a data structure  
+		3) be able to access that Fibonacci value later
+		4) our code needs to run up to Fibonacci n=1000 
+			(do you already have a guess as to why?)
+
+	We are going to compare two solutions I struggled through to attempt this challenge. The need for comparison will 
+	become evident quickly.
+
+	This article will discuss:
+		*The Fibonacci 'formula'
+		*/Recursion/ and its connection to how Ruby finds our Fibonacci value
+		*Bringing our work to scale: why fibonacci(10) and fiboonacci(1000) can be handled 
+		 by some algorithms and not others
+		*/Memoization/ and the difference between our GOOD solution and our BAD solution
+		*an introduction to 'Big O' notation and understanding our comparison programs' processing speed
+
+	The Formula
+
+							fibonacci(n) = fibonacci(n-1) + fibonacci(n-2)
+
+			Take a moment and see if you can suss out the meaning on your own 
+			if you aren't already familiar with the formula or the sequence.
+
+
+
+		So what's going on here? In short, the value of the nth term in the Fibonacci series is equal to the sum of the two previous terms.
+
+		This is what the first 10 values of the Fibonnaci series look like as an array: [0, 1, 1, 2, 3, 5, 8, 13, 21, 34]*.
+							*All fibonacci values are positive integers. No (-) values.*
+
+		If fibonacci(n) = 21, what is the value of n? Remember that (n) represents an ordered place value, an index. So at what index
+		does this fibonacci array = 21? That's right...the 8th index (starting from 0th place). So we can say, 
+		fibonacci(8) = 21 = fibonacci(7) + fibonacci(6) = 13 + 8!
+
+	
+	The Fibonacci Method and Recursion
+
+		Write a simple Ruby method that allows us to use the above formula (remember to account for 0 and (-) values). Got it? Let's compare!
+
+						
+						def fibonacci(n)
+						    if n < 2
+						    	n
+						    else 
+						    	fibonacci(n-1) + fibonacci(n-2)
+						end
+
+	Our if/else conditional allows us to weed out any n-values that would give us (-) Fibonacci values (0 and 1 both result in a negative value, 
+	and (-) indexes don't make sense). Run this code with different n-values. Don't be shy, use whatever numbers you'd like. Run into any problems yet?
+
+	Somewhere in the 30s you will definitely start to see your computer slowing down. If you run fibonacci(99) you will be waiting forever. Computers are powerful, and very, very fast, but fibonacci(99) is asking an awful lot of our machine. And why is that? Because we have asked our computer to answer this problem using recursion, which means that our code calls itself (many many version of itself) to tackle this request.
+
+	fibonacci(10) looks something like this to our computer:
+													fibonacci(10) = fibonacci(9) + fibonacci(8)
+																		//				    \\
+												fibonacci(8) + fibonacci(7)    				fibonacci(7) + fibonacci(6)
+												//						\\						//					 \\
+						fibonacci(7) + fibonacci(6)    fibonacci(6) + fibonacci(5)    fibonacci(6) + fibonacci(5)     fibonacci(5) + fibonacci(4)
+																				  ~ETC~
+
+	The process already looks tedious, and I didn't even type it all out!  Imagine how this web of calculations looks for fibonacci(100) or fibonacci(1000). Before we move on to modifying our formula to incorporate a larger term value, I want to highlight a couple of things about recursion.
+
+			1) A recursive method (a method that calls itself!) needs a *base case*, and you can think of the base case as giving the method a "way out"
+			   from the recursive behavior. Basecases can be used to account for nil values (which can trick up a lot of code), or for other purposes, like in our example...wait, what's our basecase? 
+
+			   It's our 'if n< 2' half of the conditional, which gives us a basecase of 0 and 1. 
+
+			2) Recursion will always take its data towards the basecase (this is how the loop closes).  If you look at the way the numbers are moving in calculation web above, they are constantly working their way down...if you complete the web you can see each branch end at fibonacci(0) and fibonacci (1).
+
+
+
+
